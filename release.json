@@ -1,0 +1,26 @@
+{
+  "version": "0.2.22",
+  "tag": "v0.2.22",
+  "assets": {
+    "x86_64-linux": {
+      "desktop": {
+        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.22/OpenResearch-x86_64.AppImage",
+        "hash": "sha256-uRYdhNZEaJ/+VFQeoVcqr7dYUp8N5dzPxCQWiNrDdRU="
+      },
+      "cli": {
+        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.22/openresearch-cli-x86_64-unknown-linux-musl.tar.xz",
+        "hash": "sha256-GMmp4uj/ePJZHuDOaxE9LEOSIi0TOFtUH2OUHmhQntE="
+      }
+    },
+    "aarch64-linux": {
+      "desktop": {
+        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.22/OpenResearch-aarch64.AppImage",
+        "hash": "sha256-pYvkG9k0RKxjJqysYinDwWa5usZUv6nJYoDc1Llcx8o="
+      },
+      "cli": {
+        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.22/openresearch-cli-aarch64-unknown-linux-musl.tar.xz",
+        "hash": "sha256-NM0ewybH8/kA1iNwgDQteoNuUaUiPICTOse6hF+wZzI="
+      }
+    }
+  }
+}

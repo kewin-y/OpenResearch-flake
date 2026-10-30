@@ -1,0 +1,119 @@
+name: Update
+
+on:
+  schedule:
+    - cron: '23 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-default-branch
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Prepare release and nixpkgs update
+    # Manual runs must use the default branch, just like scheduled runs.
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    outputs:
+      base_sha: ${{ steps.proposal.outputs.base_sha }}
+      changed: ${{ steps.proposal.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: cachix/install-nix-action@v31
+      - name: Fetch and verify all Linux release assets
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/update.py
+      - name: Update flake inputs once
+        run: nix flake update
+      - name: Record proposal
+        id: proposal
+        shell: bash
+        run: |
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          if git diff --quiet -- release.json flake.lock; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: steps.proposal.outputs.changed == 'true'
+        with:
+          name: update-proposal
+          path: |
+            release.json
+            flake.lock
+          if-no-files-found: error
+          retention-days: 1
+
+  check:
+    name: Verify update (${{ matrix.system }})
+    needs: prepare
+    if: needs.prepare.outputs.changed == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            system: x86_64-linux
+          - runner: ubuntu-24.04-arm
+            system: aarch64-linux
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.base_sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: update-proposal
+          path: .
+      - uses: cachix/install-nix-action@v31
+      - name: Check proposed flake and package tests
+        run: nix flake check --no-update-lock-file
+      - name: Build proposed desktop and CLI
+        run: nix build --no-update-lock-file .#openresearch .#orx
+      - name: Smoke test proposed CLI
+        run: nix run --no-update-lock-file .#orx -- --version
+
+  commit:
+    name: Commit verified update
+    needs: [prepare, check]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.base_sha }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: update-proposal
+          path: .
+      - name: Commit and push only verified metadata
+        env:
+          BASE_SHA: ${{ needs.prepare.outputs.base_sha }}
+          BRANCH: ${{ github.event.repository.default_branch }}
+        shell: bash
+        run: |
+          git fetch origin "$BRANCH"
+          if [ "$(git rev-parse FETCH_HEAD)" != "$BASE_SHA" ]; then
+            echo 'Default branch advanced during verification; refusing a stale update.' >&2
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- release.json flake.lock
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'chore: update OpenResearch release and flake inputs'
+          # A normal push also rejects a branch advance after the SHA guard.
+          git push origin "HEAD:refs/heads/$BRANCH"

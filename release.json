@@ -1,25 +1,25 @@
 {
-  "version": "0.2.22",
-  "tag": "v0.2.22",
+  "version": "0.2.26",
+  "tag": "v0.2.26",
   "assets": {
     "x86_64-linux": {
       "desktop": {
-        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.22/OpenResearch-x86_64.AppImage",
-        "hash": "sha256-uRYdhNZEaJ/+VFQeoVcqr7dYUp8N5dzPxCQWiNrDdRU="
+        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.26/OpenResearch-x86_64.AppImage",
+        "hash": "sha256-2INS5XQRmhEo3uBayzh5ypeLFFFuf6yLXH3ZdJYsWUs="
       },
       "cli": {
-        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.22/openresearch-cli-x86_64-unknown-linux-musl.tar.xz",
-        "hash": "sha256-GMmp4uj/ePJZHuDOaxE9LEOSIi0TOFtUH2OUHmhQntE="
+        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.26/openresearch-cli-x86_64-unknown-linux-musl.tar.xz",
+        "hash": "sha256-DABN/EA0OaS0qLopm2QpQRjoHiXHf7Fh+4WoXEdyxTc="
       }
     },
     "aarch64-linux": {
       "desktop": {
-        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.22/OpenResearch-aarch64.AppImage",
-        "hash": "sha256-pYvkG9k0RKxjJqysYinDwWa5usZUv6nJYoDc1Llcx8o="
+        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.26/OpenResearch-aarch64.AppImage",
+        "hash": "sha256-nEKhiytERb1Gy71MLou6KkPTXB6NHoTLn3vy6VVM10E="
       },
       "cli": {
-        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.22/openresearch-cli-aarch64-unknown-linux-musl.tar.xz",
-        "hash": "sha256-NM0ewybH8/kA1iNwgDQteoNuUaUiPICTOse6hF+wZzI="
+        "url": "https://github.com/alphaXiv/OpenResearch/releases/download/v0.2.26/openresearch-cli-aarch64-unknown-linux-musl.tar.xz",
+        "hash": "sha256-K9BkomR7hr1ezpleofMTSSmiUd95yAapaa+SW/GIBQ4="
       }
     }
   }

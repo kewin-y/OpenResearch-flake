@@ -73,12 +73,13 @@ def proposed_release():
     if not version:
         raise ValueError("The release tag has no version")
     assets = {asset["name"]: asset for asset in release["assets"]}
+    print([asset["name"] for asset in release["assets"]])
     result = {"version": version, "tag": tag, "assets": {}}
     for arch in ("x86_64", "aarch64"):
         result["assets"][f"{arch}-linux"] = {}
         names = {
             "desktop": f"OpenResearch-{arch}.AppImage",
-            "cli": f"openresearch-cli-{arch}-unknown-linux-musl.tar.xz",
+            "cli": f"openresearch-cli-{arch}-unknown-linux-musl.tar.gz",
         }
         for kind, name in names.items():
             if name not in assets:
